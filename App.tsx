@@ -1,20 +1,49 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  Montserrat_300Light,
+  Montserrat_400Regular,
+  Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
+import { loadAsync } from 'expo-font';
+import { hideAsync, preventAutoHideAsync } from 'expo-splash-screen';
+import { useCallback, useEffect, useState } from 'react';
+import { StatusBar, View } from 'react-native';
+import 'react-native-gesture-handler';
+import Main from './src/screens/Main';
 
 export default function App() {
+  const [appIsReady, setAppIsReady] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        await preventAutoHideAsync();
+        await loadAsync({
+          Montserrat_300Light,
+          Montserrat_400Regular,
+          Montserrat_700Bold,
+        });
+      } catch {
+        // handle error
+      } finally {
+        setAppIsReady(true);
+      }
+    })();
+  }, []);
+
+  const onLayout = useCallback(() => {
+    if (appIsReady) {
+      hideAsync();
+    }
+  }, [appIsReady]);
+
+  if (!appIsReady) {
+    return null;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View onLayout={onLayout} style={{ flex: 1 }}>
+      <StatusBar translucent backgroundColor="transparent" />
+      <Main />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
