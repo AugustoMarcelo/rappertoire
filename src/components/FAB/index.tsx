@@ -1,16 +1,16 @@
 import Feather from '@expo/vector-icons/Feather';
-import { TouchableHighlight } from 'react-native';
+import { TouchableHighlight, TouchableOpacityProps } from 'react-native';
 import { theme } from '../../theme';
 import { styles } from './styles';
 
-interface FABProps {
-  onOpen: () => void;
+interface FABProps extends TouchableOpacityProps {
+  icon: keyof typeof Feather.glyphMap;
 }
 
-export function FAB({ onOpen }: FABProps) {
+export function FAB({ icon, ...rest }: FABProps) {
   return (
-    <TouchableHighlight style={styles.button} onPress={onOpen}>
-      <Feather name="plus" size={24} color={theme.colors.white} />
+    <TouchableHighlight {...rest} style={[styles.button, rest.style]}>
+      <Feather name={icon} size={24} color={theme.colors.white} />
     </TouchableHighlight>
   );
 }

@@ -3,7 +3,7 @@ import { theme } from '../../theme';
 
 export const styles = StyleSheet.create({
   button: {
-    right: 24,
+    right: 12,
     bottom: 24,
     position: 'absolute',
     alignItems: 'center',
