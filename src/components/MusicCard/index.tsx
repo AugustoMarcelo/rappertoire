@@ -1,30 +1,46 @@
 import Feather from '@expo/vector-icons/Feather';
-import { Text, TouchableOpacity, View } from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  TouchableOpacityProps,
+  View,
+} from 'react-native';
 import { theme } from '../../theme';
 import { styles } from './styles';
 
-interface MusicCardProps {
+interface MusicCardProps extends TouchableOpacityProps {
   id: number;
   number: number;
   title: string;
-  style: string;
-  onClick: () => void;
+  musicStyle: string;
+  isSelected: boolean;
 }
 
-export function MusicCard(props: MusicCardProps) {
+export function MusicCard({
+  id,
+  number,
+  title,
+  musicStyle,
+  isSelected = false,
+  ...rest
+}: MusicCardProps) {
   return (
-    <TouchableOpacity style={styles.container} onPress={props.onClick}>
-      <Text style={styles.number}>{String(props.number).padStart(2, '0')}</Text>
+    <TouchableOpacity {...rest} style={styles.container}>
+      <Text style={styles.number}>{String(number).padStart(2, '0')}</Text>
       <View style={styles.info}>
-        <Text style={styles.title}>{props.title}</Text>
-        <Text style={styles.style}>{props.style}</Text>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.style}>{musicStyle}</Text>
       </View>
       <View style={styles.icon}>
-        <Feather
-          name="chevron-right"
-          size={28}
-          color={theme.colors.lightBlue[500]}
-        />
+        {isSelected ? (
+          <Feather name="check" size={28} color={theme.colors.green[500]} />
+        ) : (
+          <Feather
+            name="chevron-right"
+            size={28}
+            color={theme.colors.lightBlue[500]}
+          />
+        )}
       </View>
     </TouchableOpacity>
   );
