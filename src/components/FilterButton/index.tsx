@@ -12,7 +12,7 @@ export function FilterButton({ onPress, badgeValue }: FilterButtonProps) {
   return (
     <TouchableOpacity onPress={onPress} style={{ position: 'relative' }}>
       <Feather name="filter" size={32} color={theme.colors.white} />
-      {badgeValue && (
+      {!!badgeValue && (
         <View style={styles.container}>
           <Text style={styles.text}>{badgeValue}</Text>
         </View>
