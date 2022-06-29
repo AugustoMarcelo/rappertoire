@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
   container: {
     paddingTop: 16 + StatusBar.currentHeight! ?? 32,
     paddingBottom: 16,
-    paddingHorizontal: 24,
+    paddingHorizontal: 12,
     backgroundColor: theme.colors.lightBlue[500],
     elevation: 5,
     flexDirection: 'row',
@@ -21,5 +21,8 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.bold,
     fontSize: 24,
     color: theme.colors.white,
+  },
+  selectionTitle: {
+    fontSize: 18,
   },
 });
