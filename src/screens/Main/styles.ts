@@ -17,4 +17,13 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.colors.lightBlue[800],
     width: 56,
   },
+  emptyContainer: {
+    marginTop: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyContainerText: {
+    fontFamily: theme.fonts.regular,
+    color: theme.colors.gray[400],
+  },
 });

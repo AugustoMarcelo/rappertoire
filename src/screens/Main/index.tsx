@@ -1,58 +1,31 @@
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, Share, View } from 'react-native';
+import { FlatList, Share, Text, View } from 'react-native';
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
-import { BorderlessButton } from '../../components/BorderlessButton';
-import { Dropdown } from '../../components/Dropdown';
 import { FAB } from '../../components/FAB';
+import { FilterForm } from '../../components/FilterForm';
 import { Form } from '../../components/Form';
 import { Header } from '../../components/Header';
-import { Input } from '../../components/Input';
 import { MusicCard } from '../../components/MusicCard';
 import { Music } from '../../entities/Music';
 import { useStorage } from '../../hooks/useStorage';
-import { CreateDTO } from '../../storage/IStorage';
+import { CreateDTO, ListFilterParams } from '../../storage/IStorage';
 import { theme } from '../../theme';
-import { getMusicStyles } from '../../utils/getMusicStyles';
 import { styles } from './styles';
-
-const initialData = [
-  {
-    id: 1,
-    title: 'Só Forró',
-    style: 'Forró',
-    number: 1,
-  },
-  {
-    id: 2,
-    title: 'Coisas que o Lua canta',
-    style: 'Baião',
-    number: 2,
-  },
-  {
-    id: 3,
-    title: 'Royal Cinema',
-    style: 'Valsa',
-    number: 3,
-  },
-];
 
 interface SelectedMusic extends Music {
   isSelected: boolean;
 }
 
 function Main() {
-  const { store, list } = useStorage({ storage: 'in-memory', initialData });
+  const { store, list } = useStorage({ storage: 'in-memory' });
   const [musics, setMusics] = useState<Music[]>();
   const [selectedMusics, setSelectedMusics] = useState<SelectedMusic[]>([]);
   const [totalMusics, setTotalMusics] = useState(0);
   const [totalFilteredMusics, setTotalFilteredMusics] = useState(0);
 
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [items, setItems] = useState(getMusicStyles);
+  const [searchTermFilter, setSearchTermFilter] = useState('');
+  const [musicStyleFilter, setMusicStyleFilter] = useState('');
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetFilterRef = useRef<BottomSheet>(null);
@@ -60,8 +33,8 @@ function Main() {
   async function loadMusics() {
     const params = {};
 
-    if (searchTerm) Object.assign(params, { title: searchTerm });
-    if (value) Object.assign(params, { style: value });
+    if (searchTermFilter) Object.assign(params, { title: searchTermFilter });
+    if (musicStyleFilter) Object.assign(params, { style: musicStyleFilter });
 
     const response = await list(params);
 
@@ -98,10 +71,9 @@ function Main() {
 
   useEffect(() => {
     loadMusics();
-  }, [searchTerm, value, selectedMusics]);
+  }, [searchTermFilter, musicStyleFilter, selectedMusics]);
 
   const subtitle = useMemo(() => {
-    console.log('subtitle');
     if (totalMusics > 0 && selectedMusics.length <= 0) {
       return `${totalMusics} música(s)`;
     }
@@ -109,6 +81,8 @@ function Main() {
     if (selectedMusics.length > 0) {
       return `${selectedMusics.length} selecionada(s)`;
     }
+
+    return 'Sem repertório';
   }, [totalMusics, selectedMusics]);
 
   function openBottomSheet() {
@@ -119,13 +93,23 @@ function Main() {
     bottomSheetFilterRef.current?.expand();
   }
 
-  function onHandleFilterMusics() {
+  function onHandleFilterMusics(params?: ListFilterParams) {
+    if (!params) return;
+
+    if (params.title) {
+      setSearchTermFilter(params.title);
+    }
+
+    if (params.style) {
+      setMusicStyleFilter(params.style);
+    }
+
     bottomSheetFilterRef.current?.close();
   }
 
   function onHandleClearFilters() {
-    setSearchTerm('');
-    setValue(null);
+    setSearchTermFilter('');
+    setMusicStyleFilter('');
     bottomSheetFilterRef.current?.close();
   }
 
@@ -175,6 +159,13 @@ function Main() {
           style={{ flex: 1 }}
           data={musics}
           showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyContainerText}>
+                Seu repertório ainda está vazio... :(
+              </Text>
+            </View>
+          }
           renderItem={({ item }) => (
             <MusicCard
               key={item.id}
@@ -225,37 +216,10 @@ function Main() {
         style={styles.container}
         handleIndicatorStyle={styles.indicator}
       >
-        <View style={{ marginTop: 24 }}>
-          <Input
-            label="Buscar por nome"
-            value={searchTerm}
-            onChangeText={setSearchTerm}
-          />
-          <Dropdown
-            label="Buscar por estilo"
-            open={open}
-            value={value}
-            items={items}
-            setOpen={setOpen}
-            setValue={setValue}
-            setItems={setItems}
-          />
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <BorderlessButton
-              label="Limpar filtros"
-              onPress={onHandleClearFilters}
-              style={{ marginRight: 8 }}
-              variant="secondary"
-            />
-            <BorderlessButton label="Filtrar" onPress={onHandleFilterMusics} />
-          </View>
-        </View>
+        <FilterForm
+          onHandleClearFilters={onHandleClearFilters}
+          onHandleFilterMusics={onHandleFilterMusics}
+        />
       </BottomSheet>
     </View>
   );
