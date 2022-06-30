@@ -17,6 +17,19 @@ export class InMemoryStorage implements IStorage {
   public async store(data: CreateDTO) {
     const id = Date.now();
 
+    const usedNumberIndex = this.data.findIndex(
+      (item) => item.number === data.number
+    );
+
+    if (usedNumberIndex >= 0) {
+      this.data = this.data.map((item) => {
+        if (item.number >= data.number) {
+          item.number++;
+        }
+        return item;
+      });
+    }
+
     this.data.push({
       ...data,
       id,
@@ -29,6 +42,48 @@ export class InMemoryStorage implements IStorage {
     const itemIndex = this.data.findIndex((item) => item.id === data.id);
 
     if (itemIndex === -1) return;
+
+    // If the music has been updated to be smaller...
+    if (data.number < this.data[itemIndex].number) {
+      this.data = this.data.map((item) => {
+        if (item.number >= data.number && item.id !== data.id) {
+          item.number++;
+
+          return item;
+        }
+
+        if (item.id === data.id) {
+          item = data;
+
+          return item;
+        }
+
+        return item;
+      });
+
+      return;
+    }
+
+    // If the music has been updated to be bigger...
+    if (data.number > this.data[itemIndex].number) {
+      this.data = this.data.map((item) => {
+        if (
+          item.number > this.data[itemIndex].number &&
+          item.number <= data.number
+        ) {
+          item.number--;
+
+          return item;
+        }
+
+        if (item.id === data.id) {
+          item = data;
+          return item;
+        }
+
+        return item;
+      });
+    }
 
     this.data = this.data
       .map((item, index) => {
