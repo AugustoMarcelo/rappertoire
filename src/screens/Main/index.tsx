@@ -18,9 +18,11 @@ interface SelectedMusic extends Music {
 }
 
 function Main() {
-  const { store, list } = useStorage({ storage: 'in-memory' });
+  const { store, list, update } = useStorage({ storage: 'in-memory' });
+
   const [musics, setMusics] = useState<Music[]>();
   const [selectedMusics, setSelectedMusics] = useState<SelectedMusic[]>([]);
+  const [dataToUpdate, setDataToUpdate] = useState<Music>({} as Music);
   const [totalMusics, setTotalMusics] = useState(0);
   const [totalFilteredMusics, setTotalFilteredMusics] = useState(0);
 
@@ -49,8 +51,15 @@ function Main() {
     setTotalMusics(response.total);
   }
 
-  async function onHandleCreateMusic(data: CreateDTO) {
-    store(data);
+  async function onHandleSaveMusic(data: CreateDTO) {
+    if (!data.id) {
+      await store(data);
+    }
+
+    if (data.id) {
+      await update(data as Required<CreateDTO>);
+    }
+
     bottomSheetRef.current?.close();
     await loadMusics();
   }
@@ -87,6 +96,11 @@ function Main() {
 
   function openBottomSheet() {
     bottomSheetRef.current?.expand();
+  }
+
+  function openBottomSheetToCreate() {
+    setDataToUpdate({} as Music);
+    openBottomSheet();
   }
 
   function openBottomSheetFilter() {
@@ -126,17 +140,23 @@ function Main() {
   }
 
   function onHandleClickItem(music: Music) {
+    // Remove the selection
     if (selectedMusics.some((item) => item.id === music.id)) {
       setSelectedMusics(selectedMusics.filter((item) => item.id !== music.id));
       return;
     }
 
+    // Select if there are others items selected
     if (selectedMusics.length > 0) {
       onHandleSelectItem(music);
       return;
     }
 
-    openBottomSheet();
+    setDataToUpdate(music);
+
+    setTimeout(() => {
+      openBottomSheet();
+    }, 100);
   }
 
   function onHandleClearSelection() {
@@ -193,7 +213,7 @@ function Main() {
           }}
         />
       )}
-      <FAB onPress={openBottomSheet} icon="plus" />
+      <FAB onPress={openBottomSheetToCreate} icon="plus" />
 
       <BottomSheet
         ref={bottomSheetRef}
@@ -204,7 +224,7 @@ function Main() {
         style={styles.container}
         handleIndicatorStyle={styles.indicator}
       >
-        <Form onSubmit={onHandleCreateMusic} />
+        <Form onSubmit={onHandleSaveMusic} initialData={dataToUpdate} />
       </BottomSheet>
 
       <BottomSheet

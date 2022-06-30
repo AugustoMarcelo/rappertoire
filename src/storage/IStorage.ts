@@ -1,10 +1,13 @@
 import { Music } from '../entities/Music';
 
 export interface CreateDTO {
+  id?: number;
   title: string;
   style: string;
   number: number;
 }
+
+export interface UpdateDTO extends Required<CreateDTO> {}
 
 export interface ListFilterParams {
   title?: string;
@@ -18,5 +21,6 @@ export interface ListResponse {
 
 export interface IStorage {
   store: (data: CreateDTO) => Promise<void>;
+  update: (data: UpdateDTO) => Promise<void>;
   list: (filters?: ListFilterParams) => Promise<ListResponse>;
 }

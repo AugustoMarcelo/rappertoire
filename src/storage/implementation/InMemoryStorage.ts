@@ -4,6 +4,7 @@ import {
   IStorage,
   ListFilterParams,
   ListResponse,
+  UpdateDTO,
 } from '../IStorage';
 
 export class InMemoryStorage implements IStorage {
@@ -17,9 +18,26 @@ export class InMemoryStorage implements IStorage {
     const id = Date.now();
 
     this.data.push({
-      id,
       ...data,
+      id,
     });
+  }
+
+  public async update(data: UpdateDTO) {
+    if (!data.id) throw new Error('Id property must be mandatory');
+
+    const itemIndex = this.data.findIndex((item) => item.id === data.id);
+
+    if (itemIndex === -1) return;
+
+    this.data = this.data
+      .map((item, index) => {
+        if (index === itemIndex) {
+          return data;
+        }
+        return item;
+      })
+      .filter(Boolean);
   }
 
   public async list(filters?: ListFilterParams): Promise<ListResponse> {
