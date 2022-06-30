@@ -63,6 +63,8 @@ export class InMemoryStorage implements IStorage {
       });
     }
 
+    filteredData = filteredData.sort((a, b) => a.number - b.number);
+
     return {
       data: filteredData,
       total: filteredData.length,
