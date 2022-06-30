@@ -3,7 +3,7 @@ import { theme } from '../../theme';
 
 export const styles = StyleSheet.create({
   container: {
-    marginTop: 8,
+    marginTop: 16,
     alignSelf: 'flex-end',
   },
   text: {

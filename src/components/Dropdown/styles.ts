@@ -8,12 +8,11 @@ export const styles = StyleSheet.create({
   label: {
     fontFamily: theme.fonts.regular,
     color: theme.colors.gray[400],
-    fontSize: 12,
+    fontSize: 13,
   },
   style: {
     paddingTop: 0,
     paddingHorizontal: 0,
-    marginBottom: 16,
     borderWidth: 0,
     borderBottomWidth: 1,
     borderColor: theme.colors.gray[200],
@@ -27,5 +26,16 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.regular,
     color: theme.colors.gray[400],
     fontSize: 12,
+  },
+  styleError: {
+    borderColor: theme.colors.error[600],
+  },
+  labelError: {
+    color: theme.colors.error[600],
+  },
+  error: {
+    fontFamily: theme.fonts.regular,
+    color: theme.colors.error[600],
+    fontSize: 11,
   },
 });

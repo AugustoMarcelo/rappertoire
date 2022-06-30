@@ -13,6 +13,17 @@ export const styles = StyleSheet.create({
   label: {
     fontFamily: theme.fonts.regular,
     color: theme.colors.gray[400],
-    fontSize: 12,
+    fontSize: 13,
+  },
+  inputError: {
+    borderColor: theme.colors.error[600],
+  },
+  labelError: {
+    color: theme.colors.error[600],
+  },
+  error: {
+    fontFamily: theme.fonts.regular,
+    color: theme.colors.error[600],
+    fontSize: 11,
   },
 });

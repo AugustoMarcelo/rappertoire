@@ -23,6 +23,9 @@ export const theme = {
       500: '#0ea5e9',
       800: '#075985',
     },
+    error: {
+      600: '#dc2626',
+    },
   },
   fonts: {
     light: 'Montserrat_300Light',

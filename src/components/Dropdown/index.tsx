@@ -9,18 +9,23 @@ import { styles } from './styles';
 
 type Props = DropDownPickerProps<ValueType> & {
   label?: string;
+  hasErrors?: string;
 };
 
-export function Dropdown({ label, ...rest }: Props) {
+export function Dropdown({ label, hasErrors, ...rest }: Props) {
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && (
+        <Text style={[styles.label, hasErrors ? styles.labelError : {}]}>
+          {label}
+        </Text>
+      )}
       <DropDownPicker
         labelStyle={styles.labelStyle}
         dropDownDirection="BOTTOM"
         placeholder="Selecione um estilo"
         listMode="MODAL"
-        style={styles.style}
+        style={[styles.style, hasErrors ? styles.styleError : {}]}
         ArrowDownIconComponent={() => (
           <Feather
             name="chevron-down"
@@ -41,6 +46,7 @@ export function Dropdown({ label, ...rest }: Props) {
         textStyle={styles.textStyle}
         {...rest}
       />
+      {!!hasErrors && <Text style={styles.error}>{hasErrors}</Text>}
     </View>
   );
 }

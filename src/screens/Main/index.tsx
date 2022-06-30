@@ -1,6 +1,6 @@
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, Share, Text, View } from 'react-native';
+import { FlatList, Share, Text, ToastAndroid, View } from 'react-native';
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import { FAB } from '../../components/FAB';
 import { FilterForm } from '../../components/FilterForm';
@@ -108,7 +108,10 @@ function Main() {
   }
 
   function onHandleFilterMusics(params?: ListFilterParams) {
-    if (!params) return;
+    if (!params || (!params.title && !params.style)) {
+      ToastAndroid.show('Nenhum filtro selecionado', ToastAndroid.SHORT);
+      return;
+    }
 
     if (params.title) {
       setSearchTermFilter(params.title);
@@ -217,7 +220,7 @@ function Main() {
 
       <BottomSheet
         ref={bottomSheetRef}
-        snapPoints={[1, 350]}
+        snapPoints={[1, 370]}
         backdropComponent={(backdropProps) => (
           <BottomSheetBackdrop {...backdropProps} enableTouchThrough={true} />
         )}
