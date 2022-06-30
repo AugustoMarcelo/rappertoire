@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Keyboard, TextInput, View } from 'react-native';
 import { Music } from '../../entities/Music';
 import { CreateDTO } from '../../storage/IStorage';
 import { getMusicStyles } from '../../utils/getMusicStyles';
@@ -25,6 +25,8 @@ export function Form({ initialData, onSubmit }: FormProps) {
   const [number, setNumber] = useState(String(initialData?.number || ''));
   const [style, setStyle] = useState(initialData?.style || '');
 
+  const inputNumberRef = useRef<TextInput>(null);
+
   const [hasErrors, setHasErrors] = useState<Error[]>([]);
 
   useEffect(() => {
@@ -43,6 +45,8 @@ export function Form({ initialData, onSubmit }: FormProps) {
       number: parseInt(number),
       style,
     });
+
+    Keyboard.dismiss();
 
     setTitle('');
     setNumber('');
@@ -76,8 +80,12 @@ export function Form({ initialData, onSubmit }: FormProps) {
         hasErrors={Object.values(
           hasErrors.filter((item) => item.title)[0] || {}
         ).toString()}
+        returnKeyType="next"
+        onSubmitEditing={() => inputNumberRef.current?.focus()}
+        blurOnSubmit={false}
       />
       <Input
+        inputRef={inputNumberRef}
         label="Número"
         keyboardType="numeric"
         value={number}
@@ -85,6 +93,9 @@ export function Form({ initialData, onSubmit }: FormProps) {
         hasErrors={Object.values(
           hasErrors.filter((item) => item.number)[0] || {}
         ).toString()}
+        returnKeyType="next"
+        onSubmitEditing={() => setOpen(true)}
+        blurOnSubmit={false}
       />
       <Dropdown
         label="Estilo musical"
