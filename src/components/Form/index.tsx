@@ -41,8 +41,8 @@ export function Form({ initialData, onSubmit }: FormProps) {
 
     onSubmit({
       id,
-      title,
-      number: parseInt(number),
+      title: title.trim(),
+      number: parseInt(number.trim()),
       style,
     });
 

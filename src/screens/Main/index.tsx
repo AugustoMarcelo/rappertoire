@@ -18,7 +18,7 @@ interface SelectedMusic extends Music {
 }
 
 function Main() {
-  const { store, list, update } = useStorage({ storage: 'in-memory' });
+  const { store, list, update } = useStorage({ storage: 'sqlite' });
 
   const [musics, setMusics] = useState<Music[]>();
   const [selectedMusics, setSelectedMusics] = useState<SelectedMusic[]>([]);
@@ -60,8 +60,10 @@ function Main() {
       await update(data as Required<CreateDTO>);
     }
 
-    bottomSheetRef.current?.close();
-    await loadMusics();
+    bottomSheetRef.current?.collapse();
+    setTimeout(async () => {
+      await loadMusics();
+    }, 500);
   }
 
   async function onHandleShareSelectedText() {
