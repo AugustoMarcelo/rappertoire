@@ -17,6 +17,11 @@ export class InMemoryStorage implements IStorage {
   public async store(data: CreateDTO) {
     const id = Date.now();
 
+    const musicTitleExists = await this.findByTitle(data.title);
+
+    if (musicTitleExists)
+      throw new Error('There is already a music with this title');
+
     const usedNumberIndex = this.data.findIndex(
       (item) => item.number === data.number
     );
@@ -39,12 +44,21 @@ export class InMemoryStorage implements IStorage {
   public async update(data: UpdateDTO) {
     if (!data.id) throw new Error('Id property must be mandatory');
 
+    const musicTitleExists = await this.findByTitle(data.title);
+
+    if (musicTitleExists)
+      throw new Error('There is already a music with this title');
+
     const itemIndex = this.data.findIndex((item) => item.id === data.id);
 
     if (itemIndex === -1) return;
 
+    const numberIsAvailable = !this.data.some(
+      (item) => item.number === data.number
+    );
+
     // If the music has been updated to be smaller...
-    if (data.number < this.data[itemIndex].number) {
+    if (data.number < this.data[itemIndex].number && !numberIsAvailable) {
       this.data = this.data.map((item) => {
         if (item.number >= data.number && item.id !== data.id) {
           item.number++;
@@ -65,7 +79,7 @@ export class InMemoryStorage implements IStorage {
     }
 
     // If the music has been updated to be bigger...
-    if (data.number > this.data[itemIndex].number) {
+    if (data.number > this.data[itemIndex].number && !numberIsAvailable) {
       this.data = this.data.map((item) => {
         if (
           item.number > this.data[itemIndex].number &&
@@ -124,5 +138,15 @@ export class InMemoryStorage implements IStorage {
       data: filteredData,
       total: filteredData.length,
     };
+  }
+
+  public async destroy(data: number[]): Promise<void> {
+    this.data = this.data.filter((item) => !data.includes(item.id));
+  }
+
+  public async findByTitle(title: string): Promise<Music | undefined> {
+    return this.data.find(
+      (item) => item.title.toLowerCase() === title.toLowerCase()
+    );
   }
 }

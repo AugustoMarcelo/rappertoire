@@ -17,11 +17,14 @@ export function useStorage({ storage, initialData }: Props) {
       switch (storage) {
         case 'in-memory':
         case 'watermelon-db':
-          return new InMemoryStorage(initialData);
+          instance = new InMemoryStorage(initialData);
+          break;
         case 'sqlite':
-          return await SQLiteStorage.getInstance();
+          instance = await SQLiteStorage.getInstance();
+          break;
         default:
-          return new InMemoryStorage(initialData);
+          instance = new InMemoryStorage(initialData);
+          break;
       }
     }
 
@@ -43,9 +46,21 @@ export function useStorage({ storage, initialData }: Props) {
     return i.list(filters);
   }
 
+  async function destroy(data: number[]) {
+    const i = await getInstance();
+    return i.destroy(data);
+  }
+
+  async function findByTitle(title: string) {
+    const i = await getInstance();
+    return i.findByTitle(title);
+  }
+
   return {
     store,
     update,
     list,
+    destroy,
+    findByTitle,
   };
 }

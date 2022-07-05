@@ -41,19 +41,11 @@ export class SQLiteStorage implements IStorage {
   };
 
   async store(data: CreateDTO) {
-    await MusicModel.create(data);
+    await MusicModel.customCreate(data);
   }
 
   async update(data: UpdateDTO) {
-    let currentData = await MusicModel.find(data.id);
-
-    if (!currentData) throw new Error('Music not found');
-
-    currentData.title = data.title;
-    currentData.number = data.number;
-    currentData.style = data.style;
-
-    const result = await currentData.save();
+    await MusicModel.customUpdate(data);
   }
 
   async list(filters?: ListFilterParams | undefined): Promise<ListResponse> {
@@ -67,7 +59,7 @@ export class SQLiteStorage implements IStorage {
         ...(filters.title
           ? { title_cont: `%${filters.title.toLowerCase().trim()}%` }
           : {}),
-        ...(filters.style ? { style: filters.style } : {}),
+        ...(filters.style ? { style_eq: filters.style } : {}),
       };
     }
 
@@ -78,5 +70,18 @@ export class SQLiteStorage implements IStorage {
       data,
       total,
     };
+  }
+
+  async destroy(data: number[]): Promise<void> {
+    await MusicModel.customDestoy(data);
+  }
+
+  async findByTitle(title: string): Promise<Music | undefined> {
+    const data = await MusicModel.freeQuery(
+      `SELECT * FROM ${MusicModel.tableName} WHERE title = ? COLLATE NOCASE`,
+      [title.toLowerCase()]
+    );
+
+    return data.rows.length ? data.rows[0] : undefined;
   }
 }
