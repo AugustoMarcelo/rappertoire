@@ -7,6 +7,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingVertical: 18,
+    paddingHorizontal: theme.padding.app,
     borderBottomWidth: 1,
     borderColor: theme.colors.gray[200],
   },
@@ -32,5 +33,8 @@ export const styles = StyleSheet.create({
   },
   icon: {
     marginLeft: 'auto',
+  },
+  containerSelected: {
+    backgroundColor: theme.colors.light[100],
   },
 });

@@ -25,7 +25,10 @@ export function MusicCard({
   ...rest
 }: MusicCardProps) {
   return (
-    <TouchableOpacity {...rest} style={styles.container}>
+    <TouchableOpacity
+      {...rest}
+      style={[styles.container, isSelected ? styles.containerSelected : {}]}
+    >
       <Text style={styles.number}>{String(number).padStart(2, '0')}</Text>
       <View style={styles.info}>
         <Text style={styles.title}>{title}</Text>
