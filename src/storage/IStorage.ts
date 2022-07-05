@@ -23,4 +23,6 @@ export interface IStorage {
   store: (data: CreateDTO) => Promise<void>;
   update: (data: UpdateDTO) => Promise<void>;
   list: (filters?: ListFilterParams) => Promise<ListResponse>;
+  destroy: (data: number[]) => Promise<void>;
+  findByTitle: (title: string) => Promise<Music | undefined>;
 }
