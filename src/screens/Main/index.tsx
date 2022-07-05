@@ -2,6 +2,7 @@ import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Share, Text, ToastAndroid, View } from 'react-native';
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
+import { Container } from '../../components/Container';
 import { FAB } from '../../components/FAB';
 import { FilterForm } from '../../components/FilterForm';
 import { Form } from '../../components/Form';
@@ -17,14 +18,22 @@ interface SelectedMusic extends Music {
   isSelected: boolean;
 }
 
+interface Loading {
+  status: boolean;
+  message?: string;
+}
+
 function Main() {
-  const { store, list, update } = useStorage({ storage: 'sqlite' });
+  const { store, list, update, destroy, findByTitle } = useStorage({
+    storage: 'sqlite',
+  });
 
   const [musics, setMusics] = useState<Music[]>();
   const [selectedMusics, setSelectedMusics] = useState<SelectedMusic[]>([]);
   const [dataToUpdate, setDataToUpdate] = useState<Music>({} as Music);
   const [totalMusics, setTotalMusics] = useState(0);
   const [totalFilteredMusics, setTotalFilteredMusics] = useState(0);
+  const [isLoading, setIsLoading] = useState<Loading>({ status: false });
 
   const [searchTermFilter, setSearchTermFilter] = useState('');
   const [musicStyleFilter, setMusicStyleFilter] = useState('');
@@ -52,17 +61,37 @@ function Main() {
   }
 
   async function onHandleSaveMusic(data: CreateDTO) {
-    if (!data.id) {
-      await store(data);
-    }
+    setIsLoading({ status: true });
 
-    if (data.id) {
-      await update(data as Required<CreateDTO>);
-    }
+    try {
+      if (!data.id) {
+        await store(data);
+      }
 
-    bottomSheetRef.current?.collapse();
+      if (data.id) {
+        await update(data as Required<CreateDTO>);
+      }
+
+      bottomSheetRef.current?.collapse();
+      setTimeout(async () => {
+        await loadMusics();
+        setIsLoading({ status: false });
+      }, 500);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading({ status: false });
+    }
+  }
+
+  async function onHandleDeleteSelected() {
+    setIsLoading({ status: true });
+
+    await destroy(selectedMusics.map((item) => item.id));
+    setSelectedMusics([]);
     setTimeout(async () => {
       await loadMusics();
+      setIsLoading({ status: false });
     }, 500);
   }
 
@@ -115,6 +144,8 @@ function Main() {
       return;
     }
 
+    setIsLoading({ status: true, message: 'Buscando músicas...' });
+
     if (params.title) {
       setSearchTermFilter(params.title);
     }
@@ -124,6 +155,9 @@ function Main() {
     }
 
     bottomSheetFilterRef.current?.close();
+    setTimeout(() => {
+      setIsLoading({ status: false });
+    }, 100);
   }
 
   function onHandleClearFilters() {
@@ -169,7 +203,7 @@ function Main() {
   }
 
   return (
-    <View style={{ flex: 1, position: 'relative' }}>
+    <Container isLoading={isLoading.status} loadingMessage={isLoading.message}>
       <Header
         subtitle={subtitle}
         onPressFilterButton={openBottomSheetFilter}
@@ -179,7 +213,7 @@ function Main() {
         isSelectionHeader={selectedMusics.length > 0}
         onPressClearSelection={onHandleClearSelection}
       />
-      <View style={{ flex: 1, marginHorizontal: 12, marginTop: 8 }}>
+      <View style={{ flex: 1 }}>
         <FlatList
           style={{ flex: 1 }}
           data={musics}
@@ -208,17 +242,23 @@ function Main() {
         />
       </View>
 
-      {selectedMusics.length > 0 && (
-        <FAB
-          onPress={onHandleShareSelectedText}
-          icon="share-2"
-          style={{
-            bottom: 96,
-            backgroundColor: theme.colors.lightBlue[500],
-          }}
-        />
+      {selectedMusics.length > 0 ? (
+        <>
+          <FAB
+            onPress={onHandleDeleteSelected}
+            icon="trash-2"
+            style={{ bottom: 96 }}
+            backgroundColor={theme.colors.error[600]}
+          />
+          <FAB
+            onPress={onHandleShareSelectedText}
+            icon="share-2"
+            backgroundColor={theme.colors.lightBlue[500]}
+          />
+        </>
+      ) : (
+        <FAB onPress={openBottomSheetToCreate} icon="plus" />
       )}
-      <FAB onPress={openBottomSheetToCreate} icon="plus" />
 
       <BottomSheet
         ref={bottomSheetRef}
@@ -229,7 +269,11 @@ function Main() {
         style={styles.container}
         handleIndicatorStyle={styles.indicator}
       >
-        <Form onSubmit={onHandleSaveMusic} initialData={dataToUpdate} />
+        <Form
+          onSubmit={onHandleSaveMusic}
+          initialData={dataToUpdate}
+          findByTitle={findByTitle}
+        />
       </BottomSheet>
 
       <BottomSheet
@@ -246,7 +290,7 @@ function Main() {
           onHandleFilterMusics={onHandleFilterMusics}
         />
       </BottomSheet>
-    </View>
+    </Container>
   );
 }
 
