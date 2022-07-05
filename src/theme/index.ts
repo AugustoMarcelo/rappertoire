@@ -1,6 +1,9 @@
 export const theme = {
   colors: {
     white: '#fff',
+    light: {
+      100: '#f5f5f4',
+    },
     black: {
       50: '#18181b',
       100: '#27272a',
@@ -31,5 +34,8 @@ export const theme = {
     light: 'Montserrat_300Light',
     regular: 'Montserrat_400Regular',
     bold: 'Montserrat_700Bold',
+  },
+  padding: {
+    app: 12,
   },
 };
