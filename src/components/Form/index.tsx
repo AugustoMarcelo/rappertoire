@@ -14,9 +14,10 @@ interface Error {
 interface FormProps {
   onSubmit: (data: CreateDTO) => void;
   initialData?: Music;
+  findByTitle: (title: string) => Promise<Music | undefined>;
 }
 
-export function Form({ initialData, onSubmit }: FormProps) {
+export function Form({ initialData, onSubmit, findByTitle }: FormProps) {
   const [open, setOpen] = useState(false);
   const [id, setId] = useState<number | undefined>();
   const [items, setItems] = useState(getMusicStyles);
@@ -36,8 +37,8 @@ export function Form({ initialData, onSubmit }: FormProps) {
     setStyle(initialData?.style ?? '');
   }, [initialData]);
 
-  function onHandlePress() {
-    if (!fieldsAreValid()) return;
+  async function onHandlePress() {
+    if (!(await fieldsAreValid())) return;
 
     onSubmit({
       id,
@@ -53,10 +54,12 @@ export function Form({ initialData, onSubmit }: FormProps) {
     setStyle('');
   }
 
-  function fieldsAreValid() {
+  async function fieldsAreValid() {
     const errors = [];
 
     if (!title) errors.push({ title: 'Campo obrigatório' });
+    if (await findByTitle(title))
+      errors.push({ title: 'Já existe uma música com esse título' });
 
     if (!number) {
       errors.push({ number: 'Campo obrigatório' });
