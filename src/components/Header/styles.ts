@@ -5,12 +5,13 @@ export const styles = StyleSheet.create({
   container: {
     paddingTop: 16 + StatusBar.currentHeight! ?? 32,
     paddingBottom: 16,
-    paddingHorizontal: 12,
+    paddingHorizontal: theme.padding.app,
     backgroundColor: theme.colors.lightBlue[500],
     elevation: 5,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    zIndex: 10,
   },
   info: {
     fontFamily: theme.fonts.light,
