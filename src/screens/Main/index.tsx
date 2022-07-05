@@ -98,7 +98,9 @@ function Main() {
   async function onHandleShareSelectedText() {
     try {
       const content = selectedMusics
-        .map((item) => `*${item.number}* ${item.title}`)
+        .map(
+          (item) => `*${String(item.number).padStart(2, '0')}* - ${item.title}`
+        )
         .join('\n');
 
       await Share.share({
