@@ -12,9 +12,17 @@
 
 <p align="center">App developed to help conductors to organize their band's repertoire. The App allows to create, update, delete, select and share the musics as a text between other apps. This project also was created aiming to study offline databases, so you can find a WatermelonDB implementation.</p>
 
+<p align="center">
+  <a href="#requirements">Requirements</a> •
+  <a href="#features">Features</a> •
+  <a href="#screenshots">Screenshots</a> •
+  <a href="#used-techslibs">Used techs/libs</a> •
+  <a href="#author">Author</a>
+</p>
+
 ---
 
-### Requirements
+### **Requirements**
 
 ```bash
   # Clone this repo
@@ -34,7 +42,7 @@
 
 ---
 
-### Features
+### **Features**
 
 - [x] Create music
 - [x] Update music
@@ -45,16 +53,18 @@
 
 ---
 
-### Screenshots
+### **Screenshots**
 
-<img src="https://res.cloudinary.com/augustomarcelo/image/upload/v1657133681/Rappertoire/home.png" height="500">
-<img src="https://res.cloudinary.com/augustomarcelo/image/upload/v1657133681/Rappertoire/creating.png" height="500">
-<img src="https://res.cloudinary.com/augustomarcelo/image/upload/v1657133683/Rappertoire/filter_mode.png" height="500">
-<img src="https://res.cloudinary.com/augustomarcelo/image/upload/v1657133686/Rappertoire/selection_mode.png" height="500">
+<p align="center">
+  <img src="https://res.cloudinary.com/augustomarcelo/image/upload/v1657133681/Rappertoire/home.png" width="200">
+  <img src="https://res.cloudinary.com/augustomarcelo/image/upload/v1657133681/Rappertoire/creating.png" width="200">
+  <img src="https://res.cloudinary.com/augustomarcelo/image/upload/v1657133683/Rappertoire/filter_mode.png" width="200">
+  <img src="https://res.cloudinary.com/augustomarcelo/image/upload/v1657133686/Rappertoire/selection_mode.png" width="200">
+</p>
 
 ---
 
-### Used techs/libs
+### **Used techs/libs**
 
 - [Expo](https://expo.dev/)
 - [TypeScript](https://docs.expo.dev/versions/latest/sdk/sqlite/)
@@ -64,7 +74,7 @@
 
 ---
 
-### Author
+### **Author**
 
 <img style="border-radius: 50%;" src="https://github.com/augustomarcelo.png" width="100px;" alt=""/>
 <br />
